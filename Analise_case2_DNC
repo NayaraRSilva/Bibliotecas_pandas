@@ -1,0 +1,136 @@
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    import chart_studio.plotly as py
+    import cufflinks as cf
+    import plotly.graph_objects as go
+    import plotly.express as px
+
+    vendas = pd.read_excel(r"C:\Users\nayar\Downloads\varejo.xlsx")
+    clientes_vendas = pd.read_excel(r"C:\Users\nayar\Downloads\cliente_varejo.xlsx")
+
+    pd.set_option('display.max_columns', None)
+    print(vendas.head())
+    vendas.info()
+
+    ## VERIFICAR AS CATEGORIAS QUE TEM DENTRO DO IDCANALVENDA
+    print(vendas.groupby("idcanalvenda").idcompra.nunique())
+
+
+    #REPLACE ALTERAR O NOME APP PARA APLICATIVO
+    vendas["idcanalvenda"]=vendas["idcanalvenda"].str.replace("APP","Aplicativo")
+    print(vendas.groupby("idcanalvenda").idcompra.nunique())
+
+    print(vendas.groupby("bandeira").idcompra.nunique())
+
+    print(vendas.groupby("Nome_Departamento").idcompra.nunique())
+
+    #REPLACE ALTERAR O ESPAÇO EM BRANCO POR "-"
+    vendas["Nome_Departamento"]=vendas["Nome_Departamento"].str.replace(" ","_")
+    print(vendas.groupby("Nome_Departamento").idcompra.nunique())
+
+    ## TRATAMMENTO DE NULOS
+    print(vendas[vendas["estado"].isnull()])
+
+    vendas_sem_nulos = vendas.dropna()
+    print(vendas_sem_nulos)
+
+    vendas["estado"] = vendas["estado"].fillna("MS")
+
+    media_preco = vendas["Preço"].mean()
+    vendas["Preço"] = vendas["Preço"].fillna(media_preco)
+
+    print(media_preco)
+    print(vendas.info())
+
+    print(vendas[["Preço", "Preço_com_frete"]].describe())
+
+    preco_errado = vendas.query("Preço > Preço_com_frete")
+    vendas_correto = vendas.query("Preço < Preço_com_frete")
+
+    print(vendas_correto.describe())
+
+    print(vendas_correto.query("Nome_Departamento == 'Esporte_e_Lazer' and estado == 'SP' ").describe())
+
+
+    print(vendas_correto.groupby("Nome_Departamento").idcompra.nunique().sort_values(ascending=False).reset_index())
+
+    print(vendas_correto.groupby("Nome_Departamento")["Preço_com_frete"].agg('mean').sort_values(ascending=False).reset_index())
+
+    print (vendas_correto.groupby('Data').idcompra.nunique().sort_values(ascending=False))
+
+
+    ## CRIANDO UMA NOVA COLUNA MÊS
+    vendas_correto["mes"]= vendas_correto["Data"].dt.month
+    print(vendas_correto)
+
+    print (vendas_correto.groupby('mes').idcompra.nunique().sort_values(ascending=False))
+
+    print(clientes_vendas.head())
+
+    print(clientes_vendas[["idade","renda"]].describe())
+
+    clientes_vendas.info()
+
+    clientes_vendas = clientes_vendas.astype({"renda": "float"})
+
+    clientes_vendas.info()
+
+    ## MERGE = UNIÃO  HOW = COMO QUERO FAZER ON = CLIENTE_LOG
+    vendas_clientes = vendas_correto.merge(clientes_vendas, how="left", on="cliente_Log")
+    print(vendas_clientes)
+
+    agg_idcanal_renda = round( vendas_clientes.groupby("idcanalvenda")["renda"].agg("mean").sort_values(ascending=False).reset_index(),2)
+    print(agg_idcanal_renda)
+
+    agg_idade_bandeira= round(vendas_clientes.groupby("bandeira")["idade"].agg("mean").sort_values(ascending=False).reset_index(),2)
+    print(agg_idade_bandeira)
+
+
+    # fig = para colocar o tamanho da figura que ele quer
+    fig = plt.figure(figsize=(7,4))
+    #plt. bar passando eixo x = bandeira e eixo y = idade e colocando a cor do grafico
+    plt.bar(agg_idade_bandeira["bandeira"], agg_idade_bandeira["idade"], color="green")
+    #ylabel é pra colocar o titulo do eixo y
+    plt.ylabel("Média de idade ")
+    #titulo do grafico, localização central, tamanho da fonte , font = negrito, cor black
+    plt.title("Idade média por Bandeira", loc="center", fontsize= 13, fontweight="bold", color= "black")
+
+    plt.show()
+
+
+    fig = plt.figure(figsize=(7,4))
+    plt.bar(agg_idcanal_renda["idcanalvenda"], agg_idcanal_renda["renda"], color="green")
+    plt.ylabel("Renda média ")
+    plt.title("Renda média por canal de venda", loc="center", fontsize= 13, fontweight="bold", color= "black")
+    plt.show()
+
+    vendas_por_data = vendas_correto.groupby('Data').idcompra.nunique().reset_index()
+    print(vendas_por_data)
+
+    #grafico de linha
+    fig = plt.figure(figsize=(20,12))
+    plt.xlabel ("Data de Venda")
+    plt.ylabel("Quantidade de vendas")
+    x = vendas_por_data["Data"]
+    y = vendas_por_data["idcompra"]
+
+    plt.plot(x,y, color="green", linewidth= "2")
+    plt.show()
+
+    agg_dept_preco = vendas_correto.groupby("Nome_Departamento")["Preço_com_frete"].agg('mean').sort_values(ascending=False).reset_index()
+    print(agg_dept_preco)
+
+    fig = plt.figure(figsize=(30,20))
+    plt.bar(agg_dept_preco["Nome_Departamento"], agg_dept_preco["Preço_com_frete"], color="green")
+    plt.ylabel("Preço média ")
+    plt.title("Preço médio por departamento", loc="center", fontsize= 13, fontweight="bold", color= "black")
+    plt.show()
+
+    fig = px.bar(agg_idade_bandeira, x="bandeira", y = "idade")
+    fig.show()
+
+    figu= px.line(vendas_por_data, x="Data", y = "idcompra")
+    figu.show()
+
+    figure= px.bar(agg_dept_preco, x="Nome_Departamento", y="Preço_com_frete")
+    figure.show()
