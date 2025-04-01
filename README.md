@@ -14,76 +14,32 @@ Matplotlib (para visualização de dados estática)
 
 Plotly (para visualização de dados interativa)
 
-Estrutura do Projeto
+### Premissa de negócio:
+Ao analisar os dados, é ter em mente que existe algumas premissas de negócio que devem ser consideradas. A primeira delas é que devido a um erro no sistema, algumas compras não possuem informações de UF( Unidade Federativa). Para Solucionar esse problema, foi decidido que essas compras serão consideradas  como pertencentes ao estado de Mato Grosso do sul (MS). A segunda premissa é que o preço final de um produto não pode ser maior do que o preço com frete
 
-/
-|-- dados/                 # Pasta contendo os arquivos de entrada
-|   |-- varejo.xlsx
-|   |-- cliente_varejo.xlsx
-|-- analise_vendas.py       # Script principal de análise e visualização de dados
-|-- README.md               # Documentação do projeto
+### Métricas:
 
-Como Executar o Projeto
+Com base  nesse contexto e nas premissas de négocio estabelicidas, podemos avaliar as seguintes métricas:
 
-Certifique-se de ter o Python instalado (versão 3.8 ou superior).
+####1. Departamento mais vendidos:
+Analisando os dados de vendas, podemos identificar quais são os departamentos mais populares entre os clientes. Essa informação pode ser útil para entender quais são os produtos mais procurados pelos clientes e ajustar a precificação de produtos de acordo com a margem 
 
-Instale as dependências necessárias utilizando o seguinte comando:
+####2. Média de Preço com Frete por Nome de Departamento : 
+Para entender o comportamento de preço por departamento, podemos calcular a média de preço com frete por nome de departammento. Essa métrica pode ajudar a identificar quais são os departamentos mais rentáveis e ajustar a precificação de produtos de acordo com a margem de lucro desejada
 
-pip install pandas matplotlib plotly openpyxl
+####3. Quantidade de Vendas por mês:
+Analisando a quantidade de vendas realizadas em cada mês, podemos identificar sazonalidades no comportamento de compra dos clientes e planejar campanhas de marketing específicas para cada período.
 
-Execute o script Python:
+####4. Média de renda para cada tipo de canal de venda:
+Identificar a média de renda dos clientes em diferentes canais de venda pode ajudar a loja a adaptar a estratégia de marketing e vendas para cada público-alvo
 
-python analise_vendas.py
-
-Funcionalidades do Script
-
-Carregamento de Dados: Importa os arquivos varejo.xlsx e cliente_varejo.xlsx.
-
-Limpeza e Tratamento:
-
-Substitui valores em colunas categóricas.
-
-Trata valores nulos nas colunas estado e Preço.
-
-Cria uma nova coluna mes a partir da data.
-
-Junção de Tabelas: Mescla as tabelas de vendas e clientes.
-
-Análises Realizadas:
-
-Cálculo da média de renda por canal de venda.
-
-Cálculo da média de idade por bandeira.
-
-Contagem de vendas por data.
-
-Preço médio por departamento.
-
-Visualizações:
-
-Gráfico de barras com Matplotlib (Idade média por bandeira).
-
-Gráficos interativos com Plotly:
-
-Idade média por bandeira
-
-Evolução das vendas ao longo do tempo
-
-Preço médio por departamento
-
-Exemplos de Gráficos
-
-Idade Média por Bandeira (Matplotlib):
+####5. Média de idade de clientes por bandeira:
+Saber a faixa etária dos clientes por bandeira pode ajudar a identificar perfis de consumidores e ajustar a estratégia de venda para atender melhor cada público 
 
 
-Vendas por Data (Plotly):
 
 
-Contribuição
 
-Sinta-se à vontade para contribuir! Se desejar adicionar melhorias ou novas análises, abra uma issue ou envie um pull request.
 
-Licença
 
-Este projeto está licenciado sob a MIT License - veja o arquivo LICENSE para mais detalhes.
 
